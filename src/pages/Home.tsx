@@ -22,7 +22,7 @@ export default function Home() {
   
   if (isLoading) {
     return <div>Cargando información del usuario...</div>;
-  }
+  } 
 
   
   if (isAuthenticated && user) {
