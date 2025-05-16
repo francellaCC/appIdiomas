@@ -3,10 +3,12 @@ import { useAuth0 } from "@auth0/auth0-react";
 
 const LoginForm = () => {
 
-  const { loginWithRedirect } = useAuth0()
+  const { loginWithRedirect} = useAuth0()
+
+
 
   const handleLogin = async () => {
-    await loginWithRedirect()
+     await loginWithRedirect();
   }
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">
