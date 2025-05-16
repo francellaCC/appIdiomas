@@ -7,7 +7,7 @@ function MainLayout() {
   const navigate = useNavigate(); // Obtén la función navigate
 
   const handleLogout = () => {
-    logout({ logoutParams: { returnTo: 'http://localhost:5173/auth/login' } });
+    logout({ logoutParams: { returnTo: '/auth/login' } });
   };
 
   if (isLoading) {
