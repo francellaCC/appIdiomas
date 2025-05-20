@@ -1,4 +1,7 @@
+
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type { RootState } from '../store/store';
+
 
 interface UserProfile {
   name: string;
@@ -8,17 +11,25 @@ interface UserProfile {
 
 const baseQuery = fetchBaseQuery({
   baseUrl: 'http://localhost:8080/api',
+  prepareHeaders: (headers, { getState }) => {
+    const token = (getState() as RootState).auth.token
+    console.log(" token" ,token)
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`)
+    }
+    return headers
+  }
 });
 
 export const authApi = createApi({
   reducerPath: 'authApi',
-  baseQuery: baseQuery,
+  baseQuery,
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (userData) => ({
         url: '/users/register',
         method: 'POST',
-        body: userData,
+        body: userData
       }),
     }),
     // getUserProfile: builder.query<UserProfile, void>({
