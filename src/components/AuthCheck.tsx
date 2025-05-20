@@ -2,32 +2,53 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLoginMutation } from '../services/authApi'
+import { useDispatch } from 'react-redux';
+import { setToken } from '../features/auth/authSlice';
 
 
 function AuthCheck() {
-  const { isAuthenticated, user, isLoading } = useAuth0()
+  const { isAuthenticated, user, isLoading, getAccessTokenSilently } = useAuth0()
   const navigate = useNavigate()
 
-  const [login, { isSuccess, isError, error }] = useLoginMutation()
+  const [login, { data, isSuccess, isError, error }] = useLoginMutation()
   const [hasCalledLogin, setHasCalledLogin] = useState(false)
+  
+const dispatch = useDispatch();
 
-  useEffect(() => {
+
+useEffect(() => {
+  const doLogin = async () => {
     if (isAuthenticated && user && !hasCalledLogin) {
+      const token = await getAccessTokenSilently();
+
+      dispatch(setToken(token));
       const userData = {
         nameUser: user.name,
         email: user.email
-      }
+      };
 
-      login(userData)
-      setHasCalledLogin(true)
+      console.log("authCheck: ", token)
+      login(userData); // <-- token se pasa a prepareHeaders
+      setHasCalledLogin(true);
     }
-  }, [isAuthenticated, user, hasCalledLogin, login])
+  };
+
+  doLogin();
+}, [isAuthenticated, user, hasCalledLogin, login, getAccessTokenSilently, dispatch]);
 
   useEffect(() => {
     if (isSuccess) {
-      navigate("/home")
+      console.log('Mensaje backend:', data); // acá ves el mensaje recibido
+      navigate('/home');
     }
-  }, [isSuccess, navigate])
+  }, [isSuccess, data, navigate]);
+
+  useEffect(() => {
+    if (isError) {
+      console.error('Error backend:', error);
+      // Podés mostrar mensaje de error en UI aquí
+    }
+  }, [isError, error]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center">

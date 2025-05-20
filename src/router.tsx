@@ -20,7 +20,9 @@ export default function Router() {
         domain={domain}
         clientId={clientId}
         authorizationParams={{
-          redirect_uri: window.location.origin + "/auth/check", // <- Redirección segura post-login
+          redirect_uri: window.location.origin + "/auth/check",
+          audience: "http://localhost:8080/api", // 👈 Usa el "Identifier" de tu API registrada en Auth0
+          scope: "openid profile email"   // 👈 Esto asegura que venga el email y perfil en el token
         }}
       >
         <Routes>
