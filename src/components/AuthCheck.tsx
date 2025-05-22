@@ -28,7 +28,7 @@ useEffect(() => {
       };
 
       console.log("authCheck: ", token)
-      login(userData); // <-- token se pasa a prepareHeaders
+      //login(userData); 
       setHasCalledLogin(true);
     }
   };

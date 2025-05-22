@@ -4,6 +4,12 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import { Auth0Provider } from "@auth0/auth0-react";
 import AuthCheck from "./components/AuthCheck";
+import AdminLayout from "./layouts/AdminLayout";
+import { Dashboard } from "./pages/dashboardAdmin/Dashboard";
+import Modules from "./pages/dashboardAdmin/Modules";
+import ModuleForm from "./components/dashboardAdmin/ModuleForm";
+import Languages from "./pages/dashboardAdmin/Languages";
+import LanguageForm from "./components/dashboardAdmin/LanguageForm";
 
 
 export default function Router() {
@@ -34,6 +40,14 @@ export default function Router() {
             <Route path="/home" element={<Home />} />
           </Route>
 
+          {/* Rutas del panel de administracion */}
+          <Route path="/admin" element={<AdminLayout/>}>
+              <Route index element={<Dashboard/>}/>
+              <Route path="modules" element={<Modules/>}/>
+              <Route path="/admin/modules/create" element={<ModuleForm />} />
+              <Route path="languages" element={<Languages/>}/>
+              <Route path="/admin/languages/create" element={<LanguageForm />} />
+          </Route>
           {/* Rutas de autenticación */}
           <Route path="/auth/login" element={<Login />} />
           <Route path="/auth/check" element={<AuthCheck />} />
