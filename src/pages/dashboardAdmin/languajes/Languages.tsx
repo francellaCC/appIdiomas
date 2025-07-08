@@ -1,20 +1,27 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setLanguages } from "../../features/languages/languageSlice";
-import type { RootState } from "../../store/store";
+
 import { useNavigate } from "react-router-dom";
+import { useDeleteLanguajeMutation, useGetLanguagesQuery } from "../../../services/languageApi";
+import { retry } from "@reduxjs/toolkit/query";
 
 function Languages() {
-  const dispatch = useDispatch();
-  const languages = useSelector((state: RootState) => state.languages.languages);
-  const navigate = useNavigate()
 
-  useEffect(() => {
-    dispatch(setLanguages([
-      { id: 1, name: "English", code: "en" },
-      { id: 2, name: "Spanish", code: "es" },
-    ]));
-  }, [dispatch]);
+
+  const navigate = useNavigate()
+  const { data: languages = [], error, isLoading } = useGetLanguagesQuery();
+  const [deleteLanguaje] = useDeleteLanguajeMutation();
+
+  const handleDelete = async (id: number) => {
+    const confirmed = window.confirm('¿Estás seguro de que deseas eliminar este lenguaje? Esta acción no se puede deshacer.')
+
+    if (!confirmed) return
+
+    try {
+      await deleteLanguaje(id).unwrap();
+      alert('Lenguaje actualizado correctamente');
+    } catch (error) {
+      alert("Ocurrio un error")
+    }
+  }
 
   return (
     <div>
@@ -32,6 +39,7 @@ function Languages() {
             <th className="p-2">#</th>
             <th className="p-2">Name</th>
             <th className="p-2">Code</th>
+            <th className="p-2">Accion</th>
           </tr>
         </thead>
         <tbody>
@@ -40,6 +48,11 @@ function Languages() {
               <td className="p-2">{lang.id}</td>
               <td className="p-2">{lang.name}</td>
               <td className="p-2">{lang.code}</td>
+              <td>
+                <button onClick={() => navigate(`/admin/languages/edit/${lang.id}`)}
+                  className="mr-2 text-blue-600 hover:underline">Edititar</button>
+                <button onClick={() => handleDelete((lang.id))}>Eliminar</button>
+              </td>
             </tr>
           ))}
         </tbody>

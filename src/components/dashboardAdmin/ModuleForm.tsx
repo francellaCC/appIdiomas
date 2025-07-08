@@ -1,31 +1,37 @@
-import React, { useState, type FormEvent } from 'react'
-import type { Module } from '../../types/types';
-import { useNavigate } from 'react-router-dom';
+import { useState, type FormEvent } from 'react'
+import type { Language, TypeModuleForm } from '../../types/types';
+import { useGetLanguagesQuery } from '../../services/languageApi';
+
+type ModuleFormType = {
+  onSubmit: (formData: TypeModuleForm) => Promise<void>
+  initialData?: TypeModuleForm | undefined
+}
+
+function ModuleForm({ onSubmit, initialData }: ModuleFormType) {
+  const { data: languages = [] } = useGetLanguagesQuery();
+  const [title, setTitle] = useState(initialData?.title || "");
+  const [description, setDescription] = useState(initialData?.description || "");
+  const [order, setOrder] = useState(initialData?.order || 1);
+  const [selectedLanguageId, setSelectedLanguageId] = useState<number>(initialData?.language.id || 0);
 
 
-
-function ModuleForm() {
-   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [order, setOrder] = useState(1);
-  
-const navigate = useNavigate();
-
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const newModule: Module = {
-      id: Date.now(), // simula un ID único
+    const newModule: TypeModuleForm = {
       title,
       description,
       order,
+      language: { id: selectedLanguageId! }
     };
-    console.log("Submitted module:", newModule);
-   
+    try {
+      console.log("Submitted module:", newModule);
+      onSubmit(newModule)
+    } catch (error) {
+      console.log(error)
+    }
     setTitle("");
     setDescription("");
     setOrder(order + 1);
-
-    navigate("/admin/modules")
   };
 
   return (
@@ -59,6 +65,22 @@ const navigate = useNavigate();
           onChange={(e) => setOrder(Number(e.target.value))}
           required
         />
+      </div>
+      <div>
+        <label className="block mb-1 font-medium">Lenguaje</label>
+        <select
+          value={selectedLanguageId ?? ''}
+          onChange={(e) => setSelectedLanguageId(Number(e.target.value))}
+          className="w-full border px-3 py-2 rounded"
+          required
+        >
+          <option value="" >--Seleccione el lenguaje--</option>
+          {languages.map((lang: Language) => (
+            <option key={lang.id} value={lang.id}>
+              {lang.name}
+            </option>
+          ))}
+        </select>
       </div>
       <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
         Save Module

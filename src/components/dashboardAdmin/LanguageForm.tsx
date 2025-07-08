@@ -1,17 +1,31 @@
-import { useState,type FormEvent } from "react";
-import { useDispatch } from "react-redux";
-import { addLanguage } from "../../features/languages/languageSlice";
+import { useState, type FormEvent } from "react";
+import type { Language, LanguageFormData } from "../../types/types";
 
-function LanguageForm() {
-  const dispatch = useDispatch();
-  const [name, setName] = useState("");
-  const [code, setCode] = useState("");
 
-  const handleSubmit = (e: FormEvent) => {
+type LanguageFormType={
+
+onSubmit: (formData: LanguageFormData) => Promise<void>
+initialData?: Language | undefined
+}
+function LanguageForm({onSubmit, initialData} : LanguageFormType) {
+  const [name, setName] = useState(initialData?.name || "");
+  const [code, setCode] = useState(initialData?.code || "");
+
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    dispatch(addLanguage({ id: Date.now(), name, code }));
-    setName("");
-    setCode("");
+
+    try {
+
+      // const result = await createLanguage({name, code}).unwrap()
+      onSubmit({code, name})
+      setName("");
+      setCode("");
+      
+    } catch (error) {
+      console.log("error al guardar un lenguaje", error)
+    }
+
   };
 
   return (

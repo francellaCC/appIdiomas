@@ -8,8 +8,11 @@ import AdminLayout from "./layouts/AdminLayout";
 import { Dashboard } from "./pages/dashboardAdmin/Dashboard";
 import Modules from "./pages/dashboardAdmin/Modules";
 import ModuleForm from "./components/dashboardAdmin/ModuleForm";
-import Languages from "./pages/dashboardAdmin/Languages";
-import LanguageForm from "./components/dashboardAdmin/LanguageForm";
+import Languages from "./pages/dashboardAdmin/languajes/Languages";
+import LanguageCreate from "./pages/dashboardAdmin/languajes/LanguageCreate";
+import LanguageEdit from "./pages/dashboardAdmin/languajes/LanguageEdit";
+import ModulesEdit from "./pages/dashboardAdmin/modules/ModulesEdit";
+import ModulesCreate from "./pages/dashboardAdmin/modules/ModulesCreate";
 
 
 export default function Router() {
@@ -27,8 +30,8 @@ export default function Router() {
         clientId={clientId}
         authorizationParams={{
           redirect_uri: window.location.origin + "/auth/check",
-          audience: "http://localhost:8080/api", // 👈 Usa el "Identifier" de tu API registrada en Auth0
-          scope: "openid profile email"   // 👈 Esto asegura que venga el email y perfil en el token
+          audience: "http://localhost:8080/api",
+          scope: "openid profile email"
         }}
       >
         <Routes>
@@ -41,12 +44,16 @@ export default function Router() {
           </Route>
 
           {/* Rutas del panel de administracion */}
-          <Route path="/admin" element={<AdminLayout/>}>
-              <Route index element={<Dashboard/>}/>
-              <Route path="modules" element={<Modules/>}/>
-              <Route path="/admin/modules/create" element={<ModuleForm />} />
-              <Route path="languages" element={<Languages/>}/>
-              <Route path="/admin/languages/create" element={<LanguageForm />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+               {/* Modulos */}
+            <Route path="modules" element={<Modules />} />
+            <Route path="/admin/modules/edit/:id" element={<ModulesEdit/>}/>
+            <Route path="/admin/modules/create" element={<ModulesCreate/>}/>
+            {/* Lenguajes */}
+            <Route path="languages" element={<Languages />} />
+            <Route path="/admin/languages/create" element={<LanguageCreate />} />
+            <Route path="/admin/languages/edit/:id" element={<LanguageEdit />} />
           </Route>
           {/* Rutas de autenticación */}
           <Route path="/auth/login" element={<Login />} />

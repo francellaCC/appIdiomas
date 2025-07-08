@@ -12,34 +12,39 @@ function AuthCheck() {
 
   const [login, { data, isSuccess, isError, error }] = useLoginMutation()
   const [hasCalledLogin, setHasCalledLogin] = useState(false)
-  
-const dispatch = useDispatch();
+
+  const dispatch = useDispatch();
 
 
-useEffect(() => {
-  const doLogin = async () => {
-    if (isAuthenticated && user && !hasCalledLogin) {
-      const token = await getAccessTokenSilently();
+  useEffect(() => {
+    const doLogin = async () => {
+      if (isAuthenticated && user && !hasCalledLogin) {
+        const token = await getAccessTokenSilently();
 
-      dispatch(setToken(token));
-      const userData = {
-        nameUser: user.name,
-        email: user.email
-      };
+        dispatch(setToken(token));
+        const userData = {
+          nameUser: user.name,
+          email: user.email
+        };
 
-      console.log("authCheck: ", token)
-      //login(userData); 
-      setHasCalledLogin(true);
-    }
-  };
+        console.log("authCheck: ", token)
+        login(userData);
+        setHasCalledLogin(true);
+      }
+    };
 
-  doLogin();
-}, [isAuthenticated, user, hasCalledLogin, login, getAccessTokenSilently, dispatch]);
+    doLogin();
+  }, [isAuthenticated, user, hasCalledLogin, login, getAccessTokenSilently, dispatch]);
 
   useEffect(() => {
     if (isSuccess) {
       console.log('Mensaje backend:', data); // acá ves el mensaje recibido
-      navigate('/home');
+      if (data.useRole == 1) {
+        navigate('/admin');
+      } else {
+        navigate('/home');
+      }
+
     }
   }, [isSuccess, data, navigate]);
 

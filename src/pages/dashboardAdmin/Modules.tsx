@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import type { Module } from '../../types/types';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { useGetModulesQuery } from '../../services/moduleApi';
 
 
 
@@ -10,6 +11,7 @@ function Modules() {
 
   const navigate = useNavigate();
    const dispatch = useDispatch();
+   const {data : module = [] } = useGetModulesQuery();
 
   // useEffect(() => {
   //   dispatch(setModules([
@@ -17,6 +19,8 @@ function Modules() {
   //     { id: 2, title: "Intermediate", description: "Grammar", order: 2 },
   //   ]));
   // }, [dispatch]);
+
+  console.log(module)
 
   return (
     <div>
@@ -34,15 +38,23 @@ function Modules() {
             <th className="p-2">Title</th>
             <th className="p-2">Description</th>
             <th className="p-2">Order</th>
+            <th className="p-2">Lenguaje</th>
+            <th className="p-2">Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {modules.map((mod) => (
+          {module.map((mod) => (
             <tr key={mod.id} className="border-t hover:bg-gray-50">
               <td className="p-2">{mod.id}</td>
               <td className="p-2">{mod.title}</td>
               <td className="p-2">{mod.description}</td>
               <td className="p-2">{mod.order}</td>
+              <td className="p-2">{mod.language.name}</td>
+              <td>
+                <button onClick={() => navigate(`/admin/modules/edit/${mod.id}`)}
+                  className="mr-2 text-blue-600 hover:underline">Edititar</button>
+                <button onClick={() => console.log(mod.id)}>Eliminar</button>
+              </td>
             </tr>
           ))}
         </tbody>
